@@ -351,10 +351,10 @@ export default function Sidebar({
       className={`flex flex-col h-full text-white shadow-xl ${
         isMobile ? 'w-80' : collapsed ? 'w-20' : 'w-72'
       }`}
-      style={{ backgroundColor: '#169C47' }}
+      style={{ backgroundColor: '#2E276D' }}
     >
       {/* Brand Header */}
-      <div className="flex items-center justify-between h-16 px-4 border-b border-emerald-600/40 shrink-0">
+      <div className="flex items-center justify-between h-16 px-4 border-b border-indigo-400/20 shrink-0">
         {(!collapsed || isMobile) && (
           <div className="flex items-center gap-3 overflow-hidden">
             <img
@@ -363,8 +363,8 @@ export default function Sidebar({
               className="w-10 h-10 object-contain bg-white rounded-xl p-0.5 shadow-md shrink-0"
             />
             <div className="min-w-0">
-              <h1 className="font-bold text-lg leading-tight tracking-wide">OMEX EXPRESS</h1>
-              <p className="text-xs text-emerald-100/80 truncate">Delivery Services</p>
+              <h1 className="font-bold text-lg leading-tight tracking-wide text-white">OMEX EXPRESS</h1>
+              <p className="text-xs text-orange-400 font-semibold truncate">Delivery Services</p>
             </div>
           </div>
         )}
@@ -380,14 +380,14 @@ export default function Sidebar({
         {isMobile ? (
           <button
             onClick={() => setMobileOpen?.(false)}
-            className="p-2 rounded-lg bg-emerald-700/60 hover:bg-emerald-600 transition-colors text-emerald-100"
+            className="p-2 rounded-lg bg-indigo-950/60 hover:bg-indigo-900 transition-colors text-indigo-100"
           >
             <X className="w-5 h-5" />
           </button>
         ) : (
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="p-1.5 rounded-lg bg-emerald-700/60 hover:bg-emerald-600 transition-colors text-emerald-100 hidden md:flex items-center justify-center shrink-0"
+            className="p-1.5 rounded-lg bg-indigo-950/60 hover:bg-indigo-900 transition-colors text-indigo-100 hidden md:flex items-center justify-center shrink-0"
           >
             {dir === 'rtl' ? (
               collapsed ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />
@@ -399,7 +399,7 @@ export default function Sidebar({
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto p-2.5 space-y-0.5 scrollbar-thin scrollbar-thumb-emerald-600 scrollbar-track-transparent">
+      <nav className="flex-1 overflow-y-auto p-2.5 space-y-0.5 scrollbar-thin scrollbar-thumb-indigo-900 scrollbar-track-transparent">
         {sections.map((section) => {
           const Icon = section.icon;
           const hasSubItems = section.subItems && section.subItems.length > 0;
@@ -416,12 +416,12 @@ export default function Sidebar({
                   onClick={() => isMobile && setMobileOpen?.(false)}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition-all group ${
                     isActive
-                      ? 'bg-white text-[#169C47] font-semibold shadow-md'
-                      : 'text-emerald-50 hover:bg-emerald-700/50 hover:text-white'
+                      ? 'bg-[#E87722] text-white font-bold shadow-md'
+                      : 'text-indigo-100 hover:bg-indigo-900/60 hover:text-white'
                   }`}
                   title={collapsed && !isMobile ? (lang === 'ar' ? section.nameAr : section.name) : undefined}
                 >
-                  <Icon className={`w-[18px] h-[18px] shrink-0 ${isActive ? 'text-[#169C47]' : 'text-emerald-200 group-hover:text-white'}`} />
+                  <Icon className={`w-[18px] h-[18px] shrink-0 ${isActive ? 'text-white' : 'text-indigo-300 group-hover:text-white'}`} />
                   {(!collapsed || isMobile) && (
                     <span className="truncate text-[13px]">{lang === 'ar' ? section.nameAr : section.name}</span>
                   )}
@@ -431,19 +431,19 @@ export default function Sidebar({
                   onClick={() => toggleSection(section.id)}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition-all group ${
                     isActive
-                      ? 'bg-emerald-800/80 text-white font-semibold'
-                      : 'text-emerald-50 hover:bg-emerald-700/50 hover:text-white'
+                      ? 'bg-indigo-950/80 text-white font-semibold'
+                      : 'text-indigo-100 hover:bg-indigo-900/60 hover:text-white'
                   }`}
                   title={collapsed && !isMobile ? (lang === 'ar' ? section.nameAr : section.name) : undefined}
                 >
-                  <Icon className={`w-[18px] h-[18px] shrink-0 ${isActive ? 'text-white' : 'text-emerald-200 group-hover:text-white'}`} />
+                  <Icon className={`w-[18px] h-[18px] shrink-0 ${isActive ? 'text-orange-400' : 'text-indigo-300 group-hover:text-white'}`} />
                   {(!collapsed || isMobile) && (
                     <>
                       <span className="truncate text-[13px] flex-1 text-start">{lang === 'ar' ? section.nameAr : section.name}</span>
                       {isOpen ? (
-                        <ChevronUp className="w-3.5 h-3.5 shrink-0 text-emerald-300" />
+                        <ChevronUp className="w-3.5 h-3.5 shrink-0 text-indigo-300" />
                       ) : (
-                        <ChevronDown className="w-3.5 h-3.5 shrink-0 text-emerald-300" />
+                        <ChevronDown className="w-3.5 h-3.5 shrink-0 text-indigo-300" />
                       )}
                     </>
                   )}
@@ -452,7 +452,7 @@ export default function Sidebar({
 
               {/* Sub-Items */}
               {(!collapsed || isMobile) && hasSubItems && isOpen && (
-                <div className="ps-5 pe-1 py-1 space-y-0.5 border-s-2 border-emerald-500/30 ms-5 mt-1 mb-1">
+                <div className="ps-5 pe-1 py-1 space-y-0.5 border-s-2 border-indigo-400/30 ms-5 mt-1 mb-1">
                   {section.subItems!.map((sub) => {
                     const isSubActive = pathname === sub.href;
                     const SubIcon = sub.icon;
@@ -463,11 +463,11 @@ export default function Sidebar({
                         onClick={() => isMobile && setMobileOpen?.(false)}
                         className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-[12px] font-medium transition-colors ${
                           isSubActive
-                            ? 'bg-white text-[#169C47] font-bold shadow-sm'
-                            : 'text-emerald-100/90 hover:text-white hover:bg-emerald-700/40'
+                            ? 'bg-[#E87722] text-white font-bold shadow-xs'
+                            : 'text-indigo-100/90 hover:text-white hover:bg-indigo-900/50'
                         }`}
                       >
-                        <SubIcon className={`w-3.5 h-3.5 shrink-0 ${isSubActive ? 'text-[#169C47]' : ''}`} />
+                        <SubIcon className={`w-3.5 h-3.5 shrink-0 ${isSubActive ? 'text-white' : ''}`} />
                         <span className="truncate">{lang === 'ar' ? sub.nameAr : sub.name}</span>
                       </Link>
                     );
@@ -480,11 +480,11 @@ export default function Sidebar({
       </nav>
 
       {/* Footer */}
-      <div className="p-2.5 border-t border-emerald-600/40 space-y-2 shrink-0">
+      <div className="p-2.5 border-t border-indigo-400/20 space-y-2 shrink-0">
         <Link
           href="/login"
           onClick={() => isMobile && setMobileOpen?.(false)}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-emerald-100 hover:bg-emerald-700/60 hover:text-white text-sm font-medium transition-colors"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-indigo-100 hover:bg-indigo-900/60 hover:text-white text-sm font-medium transition-colors"
           title={collapsed && !isMobile ? t.nav.logout : undefined}
         >
           <LogOut className="w-[18px] h-[18px] shrink-0" />
@@ -492,13 +492,13 @@ export default function Sidebar({
         </Link>
 
         {(!collapsed || isMobile) && (
-          <div className="bg-emerald-800/60 rounded-xl p-3 flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-white text-[#169C47] font-bold flex items-center justify-center text-xs shadow shrink-0">
+          <div className="bg-indigo-950/60 rounded-xl p-3 flex items-center gap-3 border border-indigo-800/40">
+            <div className="w-8 h-8 rounded-full bg-[#E87722] text-white font-bold flex items-center justify-center text-xs shadow shrink-0">
               AD
             </div>
             <div className="overflow-hidden">
               <p className="text-xs font-bold text-white truncate">Admin Dispatcher</p>
-              <p className="text-[10px] text-emerald-200 truncate">admin@omex.ae</p>
+              <p className="text-[10px] text-indigo-200 truncate">admin@omex.ae</p>
             </div>
           </div>
         )}

@@ -94,7 +94,7 @@ export default function OrderDetailsPage() {
       <div className="flex items-center justify-between no-print">
         <button
           onClick={() => window.print()}
-          className="flex items-center gap-2 px-5 py-2.5 bg-[#169C47] hover:bg-emerald-700 text-white rounded-xl font-bold text-xs shadow-md transition active:scale-95 cursor-pointer"
+          className="flex items-center gap-2 px-5 py-2.5 bg-[#E87722] hover:bg-[#D46615] text-white rounded-xl font-bold text-xs shadow-md transition active:scale-95 cursor-pointer"
         >
           <Printer className="w-4 h-4" />
           <span>{isAr ? 'طباعة' : 'PRINT'}</span>
@@ -116,11 +116,11 @@ export default function OrderDetailsPage() {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all border-b-2 ${
                 isActive
-                  ? 'border-[#169C47] text-[#169C47] bg-emerald-50/50'
+                  ? 'border-[#352F7A] text-[#352F7A] bg-indigo-50/50'
                   : 'border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50'
               }`}
             >
-              <Icon className="w-3.5 h-3.5" />
+              <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#E87722]' : ''}`} />
               <span>{isAr ? tab.labelAr : tab.labelEn}</span>
             </button>
           );

@@ -2,10 +2,11 @@
 
 @layer base {
   :root {
-    --brand-green: #169C47;
-    --brand-green-hover: #12823b;
-    --brand-dark: #0d5e2b;
-    --bg-light: #f8fafc;
+    --brand-indigo: #352F7A;
+    --brand-indigo-dark: #231E56;
+    --brand-orange: #E87722;
+    --brand-orange-hover: #D46615;
+    --bg-light: #F8F7FC;
   }
 
   body {

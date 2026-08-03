@@ -94,8 +94,8 @@ export default function OrderListPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
         <div>
-          <div className="flex items-center gap-2 text-[#169C47] font-bold text-xs">
-            <PackageCheck className="w-4 h-4" />
+          <div className="flex items-center gap-2 text-[#352F7A] font-bold text-xs">
+            <PackageCheck className="w-4 h-4 text-[#E87722]" />
             <span>{t.orders.title}</span>
           </div>
           <h2 className="text-xl font-black text-slate-900 mt-1">{t.nav.orderList}</h2>
@@ -123,7 +123,7 @@ export default function OrderListPage() {
           </button>
           <Link
             href="/dashboard/orders/create"
-            className="flex items-center gap-2 px-4 py-2 bg-[#169C47] hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md transition-all active:scale-95"
+            className="flex items-center gap-2 px-4 py-2 bg-[#E87722] hover:bg-[#D46615] text-white rounded-xl text-xs font-bold shadow-md transition-all active:scale-95"
           >
             <PlusCircle className="w-4 h-4" />
             <span>{t.orders.createTitle}</span>
@@ -140,7 +140,7 @@ export default function OrderListPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t.orders.filterOrders}
-            className="w-full ps-10 pe-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-[#169C47] outline-none"
+            className="w-full ps-10 pe-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-[#352F7A] outline-none"
           />
         </div>
 
@@ -152,7 +152,7 @@ export default function OrderListPage() {
               onClick={() => setSelectedStatus(st)}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
                 selectedStatus === st
-                  ? 'bg-[#169C47] text-white shadow-xs'
+                  ? 'bg-[#352F7A] text-white shadow-xs'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >

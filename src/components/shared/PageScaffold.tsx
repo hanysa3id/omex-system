@@ -179,8 +179,8 @@ export default function PageScaffold({
     <div className="space-y-6 relative">
       {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed bottom-6 end-6 z-50 bg-[#169C47] text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4">
-          <CheckCircle2 className="w-5 h-5 text-white" />
+        <div className="fixed bottom-6 end-6 z-50 bg-[#352F7A] text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4 border border-indigo-400/30">
+          <CheckCircle2 className="w-5 h-5 text-[#E87722]" />
           <span className="text-sm font-bold">{toastMessage}</span>
         </div>
       )}
@@ -188,7 +188,7 @@ export default function PageScaffold({
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="bg-[#169C47]/10 text-[#169C47] p-3 rounded-2xl">
+          <div className="bg-[#352F7A]/10 text-[#352F7A] p-3 rounded-2xl">
             <Icon className="w-6 h-6" />
           </div>
           <div>
@@ -203,7 +203,7 @@ export default function PageScaffold({
               onClick={handleExport}
               className="inline-flex items-center gap-2 px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition shadow-sm active:scale-95"
             >
-              <Download className="w-4 h-4 text-emerald-600" />
+              <Download className="w-4 h-4 text-[#E87722]" />
               {lang === 'ar' ? 'تصدير Excel' : 'Export Excel'}
             </button>
           )}
@@ -213,7 +213,7 @@ export default function PageScaffold({
                 setFormData({});
                 setIsCreateOpen(true);
               }}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-white bg-[#169C47] hover:bg-[#128a3c] transition shadow-sm active:scale-95"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-[#E87722] hover:bg-[#D46615] transition shadow-sm active:scale-95 cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               {lang === 'ar' ? createLabelAr : createLabelEn}

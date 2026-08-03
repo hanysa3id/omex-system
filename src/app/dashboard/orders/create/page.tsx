@@ -138,11 +138,11 @@ export default function CreateOrderPage() {
           </button>
 
           <button
-            onClick={handleSubmit}
+            onClick={() => handleSubmit()}
             type="button"
-            className="flex items-center gap-2 px-5 py-2 bg-[#169C47] hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md transition active:scale-95 cursor-pointer"
+            className="flex items-center gap-2 px-5 py-2 bg-[#352F7A] hover:bg-[#231E56] text-white rounded-xl text-xs font-bold shadow-md transition active:scale-95 cursor-pointer"
           >
-            <Save className="w-4 h-4" />
+            <Save className="w-4 h-4 text-[#E87722]" />
             <span>{lang === 'ar' ? 'حفظ الطلب' : 'Save Order'}</span>
           </button>
         </div>
