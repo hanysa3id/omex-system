@@ -19,8 +19,11 @@ import {
   HelpCircle,
 } from 'lucide-react';
 
+import { useData } from '@/lib/context/DataContext';
+
 export default function CreateOrderPage() {
   const { t, lang } = useI18n();
+  const { addOrder } = useData();
   const router = useRouter();
 
   // Section 1: Order Meta
@@ -78,8 +81,24 @@ export default function CreateOrderPage() {
   const totalCustomerAmount = collectFrom === 'Customer' ? productPrice + deliveryCharge + vatAmount : 0;
   const totalClientAmount = collectFrom === 'Client' ? deliveryCharge + vatAmount : 0;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    addOrder({
+      voucherNo,
+      refNo,
+      clientName: clientName || 'Emirates Global Trading',
+      customerName: customerName || 'Valued Customer',
+      customerPhone: customerPhone1 || '+971 50 000 0000',
+      emirate: customerEmirate || 'Dubai',
+      area: customerLocation || 'Business Bay',
+      addressLine: customerAddress || 'Dubai UAE',
+      payType,
+      productPrice,
+      deliveryCharge,
+      taxAmount: vatAmount,
+      totalAmount: totalCustomerAmount || productPrice + deliveryCharge,
+      notes,
+    });
     setCreatedOrderModal(true);
   };
 

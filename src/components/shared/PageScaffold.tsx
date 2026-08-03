@@ -21,6 +21,8 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 
+import { useData } from '@/lib/context/DataContext';
+
 interface Column {
   key: string;
   en: string;
@@ -35,6 +37,7 @@ interface PageScaffoldProps {
   icon: LucideIcon;
   columns: Column[];
   rows: Record<string, string | number>[];
+  categoryKey?: string;
   showCreate?: boolean;
   showExport?: boolean;
   showFilter?: boolean;
@@ -53,6 +56,7 @@ export default function PageScaffold({
   icon: Icon,
   columns,
   rows: initialRows,
+  categoryKey,
   showCreate = true,
   showExport = true,
   showFilter = true,
@@ -63,9 +67,13 @@ export default function PageScaffold({
   statusColors = {},
 }: PageScaffoldProps) {
   const { lang } = useI18n();
+  const { getCategoryRecords, addRecordToCategory } = useData();
+
+  const activeCategory = categoryKey || titleEn;
+  const persistedRows = getCategoryRecords(activeCategory, initialRows);
 
   // Local interactive state
-  const [tableRows, setTableRows] = useState<Record<string, string | number>[]>(initialRows);
+  const [tableRows, setTableRows] = useState<Record<string, string | number>[]>(persistedRows);
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
@@ -80,6 +88,11 @@ export default function PageScaffold({
 
   // Toast state
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Sync rows if persisted rows update
+  React.useEffect(() => {
+    setTableRows(persistedRows);
+  }, [persistedRows.length]);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -135,6 +148,7 @@ export default function PageScaffold({
       }
     });
 
+    addRecordToCategory(activeCategory, newRow);
     setTableRows([newRow, ...tableRows]);
     setIsCreateOpen(false);
     setFormData({});

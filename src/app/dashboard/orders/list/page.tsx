@@ -18,13 +18,14 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useData } from '@/lib/context/DataContext';
 
 export default function OrderListPage() {
   const { t, lang } = useI18n();
+  const { orders, toggleHoldOrder, reverseCancelOrder } = useData();
   const router = useRouter();
   const isAr = lang === 'ar';
 
-  const [orders, setOrders] = useState<Order[]>(INITIAL_ORDERS);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('All');
   const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
@@ -60,15 +61,11 @@ export default function OrderListPage() {
   };
 
   const handleHoldOrder = (id: string) => {
-    setOrders((prev) =>
-      prev.map((o) => (o.id === id ? { ...o, isOnHold: !o.isOnHold, status: !o.isOnHold ? 'On Hold' : 'Pickup Scheduled' } : o))
-    );
+    toggleHoldOrder(id);
   };
 
   const handleReverseCancel = (id: string) => {
-    setOrders((prev) =>
-      prev.map((o) => (o.id === id ? { ...o, isCancelled: false, status: 'In Transit' } : o))
-    );
+    reverseCancelOrder(id);
   };
 
   const handleExportExcel = () => {

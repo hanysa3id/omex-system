@@ -5,6 +5,7 @@ import Sidebar from '@/components/layout/Sidebar';
 import Topbar from '@/components/layout/Topbar';
 import CommandPalette from '@/components/layout/CommandPalette';
 import { I18nProvider } from '@/lib/i18n/I18nContext';
+import { DataProvider } from '@/lib/context/DataContext';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
@@ -13,32 +14,34 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <I18nProvider>
-      <div className="flex h-screen w-screen overflow-hidden bg-slate-50">
-        {/* Dark Green Sidebar (Desktop & Mobile Drawer) */}
-        <Sidebar
-          collapsed={collapsed}
-          setCollapsed={setCollapsed}
-          mobileOpen={mobileOpen}
-          setMobileOpen={setMobileOpen}
-        />
-
-        {/* Main Content Workspace */}
-        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-          {/* Topbar */}
-          <Topbar
-            onOpenCommandPalette={() => setIsCmdOpen(true)}
-            onOpenMobileSidebar={() => setMobileOpen(true)}
+      <DataProvider>
+        <div className="flex h-screen w-screen overflow-hidden bg-slate-50">
+          {/* Dark Green Sidebar (Desktop & Mobile Drawer) */}
+          <Sidebar
+            collapsed={collapsed}
+            setCollapsed={setCollapsed}
+            mobileOpen={mobileOpen}
+            setMobileOpen={setMobileOpen}
           />
 
-          {/* Dynamic Page Area */}
-          <main className="flex-1 overflow-y-auto p-3 sm:p-6 lg:p-8 bg-slate-50/70">
-            <div className="max-w-7xl mx-auto space-y-6">{children}</div>
-          </main>
-        </div>
+          {/* Main Content Workspace */}
+          <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+            {/* Topbar */}
+            <Topbar
+              onOpenCommandPalette={() => setIsCmdOpen(true)}
+              onOpenMobileSidebar={() => setMobileOpen(true)}
+            />
 
-        {/* Global Cmd+K Command Palette */}
-        <CommandPalette isOpen={isCmdOpen} onClose={() => setIsCmdOpen(false)} />
-      </div>
+            {/* Dynamic Page Area */}
+            <main className="flex-1 overflow-y-auto p-3 sm:p-6 lg:p-8 bg-slate-50/70">
+              <div className="max-w-7xl mx-auto space-y-6">{children}</div>
+            </main>
+          </div>
+
+          {/* Global Cmd+K Command Palette */}
+          <CommandPalette isOpen={isCmdOpen} onClose={() => setIsCmdOpen(false)} />
+        </div>
+      </DataProvider>
     </I18nProvider>
   );
 }
