@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useCallback } from 'react';
 import { useI18n } from '@/lib/i18n/I18nContext';
-import { INITIAL_CLIENTS, INITIAL_DRIVERS, INITIAL_EMIRATES_AREAS } from '@/lib/mockData';
+import { INITIAL_CLIENTS, INITIAL_DRIVERS, INITIAL_EMIRATES_AREAS, INITIAL_CUSTOMERS } from '@/lib/mockData';
 import { PayType, OrderType } from '@/types';
 import { useRouter } from 'next/navigation';
 import {
@@ -21,13 +21,87 @@ import {
 
 import { useData } from '@/lib/context/DataContext';
 
+// ── Autocomplete Search Component ──
+function AutocompleteSearch({
+  value,
+  onChange,
+  onSelect,
+  placeholder,
+  dataList,
+  keyExtractor,
+  labelExtractor,
+  subLabelExtractor,
+  className
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  onSelect: (item: any) => void;
+  placeholder: string;
+  dataList: any[];
+  keyExtractor: (item: any) => string;
+  labelExtractor: (item: any) => string;
+  subLabelExtractor?: (item: any) => string;
+  className?: string;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const filtered = useMemo(() => {
+    if (!value || typeof value !== 'string') return [];
+    return dataList.filter(item => {
+      const label = labelExtractor(item)?.toLowerCase() || '';
+      const sub = subLabelExtractor ? (subLabelExtractor(item)?.toLowerCase() || '') : '';
+      const search = value.toLowerCase();
+      return label.includes(search) || sub.includes(search);
+    }).slice(0, 5);
+  }, [value, dataList, labelExtractor, subLabelExtractor]);
+
+  return (
+    <div className="relative">
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => {
+          onChange(e.target.value);
+          setIsOpen(true);
+        }}
+        onFocus={() => setIsOpen(true)}
+        onBlur={() => setTimeout(() => setIsOpen(false), 200)}
+        placeholder={placeholder}
+        className={className}
+      />
+      {isOpen && filtered.length > 0 && (
+        <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border border-slate-200 shadow-xl rounded-xl overflow-hidden text-start">
+          {filtered.map(item => (
+            <div
+              key={keyExtractor(item)}
+              onClick={() => {
+                onSelect(item);
+                setIsOpen(false);
+              }}
+              className="p-2.5 hover:bg-slate-50 cursor-pointer border-b border-slate-100 last:border-0 transition"
+            >
+              <p className="text-xs font-bold text-slate-800">{labelExtractor(item)}</p>
+              {subLabelExtractor && subLabelExtractor(item) && (
+                <p className="text-[10px] text-slate-500 font-semibold mt-0.5">{subLabelExtractor(item)}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function CreateOrderPage() {
   const { t, lang } = useI18n();
   const { addOrder, getCategoryRecords } = useData();
   const router = useRouter();
 
-  // Get all areas from Master Data (persisted + defaults)
+  // Master Data
   const allAreas = useMemo(() => getCategoryRecords('Emirates', INITIAL_EMIRATES_AREAS), [getCategoryRecords]);
+  const clients = useMemo(() => getCategoryRecords('Clients', INITIAL_CLIENTS), [getCategoryRecords]);
+  const customers = useMemo(() => getCategoryRecords('Customers', INITIAL_CUSTOMERS), [getCategoryRecords]);
+  const drivers = useMemo(() => getCategoryRecords('Drivers', INITIAL_DRIVERS), [getCategoryRecords]);
 
   // Section 1: Order Meta
   const [voucherNo] = useState(`OD${Math.floor(1000 + Math.random() * 9000)}`);
@@ -85,7 +159,7 @@ export default function CreateOrderPage() {
   // Auto-fill delivery charge when area changes
   const handleAreaChange = useCallback((areaName: string) => {
     setDeliveryArea(areaName);
-    const matchedArea = allAreas.find((a: any) => a.areaName === areaName);
+    const matchedArea = allAreas.find((a: any) => a.areaName === areaName || a.areaNameAr === areaName);
     if (matchedArea) {
       if (orderType === 'Express') {
         setDeliveryCharge(matchedArea.expressCharge || matchedArea.deliveryCharge || 20);
@@ -103,7 +177,7 @@ export default function CreateOrderPage() {
   const setOrderType = useCallback((newType: OrderType) => {
     setOrderTypeRaw(newType);
     if (deliveryArea) {
-      const matchedArea = allAreas.find((a: any) => a.areaName === deliveryArea);
+      const matchedArea = allAreas.find((a: any) => a.areaName === deliveryArea || a.areaNameAr === deliveryArea);
       if (matchedArea) {
         if (newType === 'Express') {
           setDeliveryCharge(matchedArea.expressCharge || matchedArea.deliveryCharge || 20);
@@ -151,6 +225,8 @@ export default function CreateOrderPage() {
     setCustomerPhone1('');
     setCustomerPhone2('');
     setCustomerAddress('');
+    setCustomerLocation('');
+    setClientLocation('');
     setNotes('');
     setCreatedOrderModal(false);
   };
@@ -222,11 +298,15 @@ export default function CreateOrderPage() {
               <label className="block text-[11px] font-bold text-slate-700 mb-1">
                 {lang === 'ar' ? 'الاستلام بواسطة' : 'Pickup By'}
               </label>
-              <input
-                type="text"
+              <AutocompleteSearch
                 value={pickupDriver}
-                onChange={(e) => setPickupDriver(e.target.value)}
+                onChange={setPickupDriver}
+                onSelect={(d) => setPickupDriver(d.fullName)}
                 placeholder={lang === 'ar' ? 'ابحث أو اختر السائق' : 'Search driver'}
+                dataList={drivers}
+                keyExtractor={(d) => d.id}
+                labelExtractor={(d) => d.fullName}
+                subLabelExtractor={(d) => d.phone}
                 className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-start"
               />
             </div>
@@ -387,11 +467,20 @@ export default function CreateOrderPage() {
             <div className="grid grid-cols-3 gap-2.5">
               <div>
                 <label className="block text-[10px] font-bold text-slate-700 mb-1">{lang === 'ar' ? 'اسم العميل' : 'Client Name'}</label>
-                <input
-                  type="text"
+                <AutocompleteSearch
                   value={clientName}
-                  onChange={(e) => setClientName(e.target.value)}
+                  onChange={setClientName}
+                  onSelect={(c) => {
+                    setClientName(c.companyName || c.companyNameAr || '');
+                    if (c.phone) setClientPhone(c.phone);
+                    if (c.emirate) setClientEmirate(c.emirate);
+                    if (c.address) setClientAddress(c.address);
+                  }}
                   placeholder={lang === 'ar' ? 'ابحث أو أدخل عميلاً جديداً' : 'Search or enter client'}
+                  dataList={clients}
+                  keyExtractor={(c) => c.id}
+                  labelExtractor={(c) => c.companyName || c.companyNameAr || ''}
+                  subLabelExtractor={(c) => c.phone}
                   className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl"
                 />
               </div>
@@ -435,11 +524,18 @@ export default function CreateOrderPage() {
               </div>
               <div>
                 <label className="block text-[10px] font-bold text-slate-700 mb-1">{lang === 'ar' ? 'الموقع' : 'Location'}</label>
-                <input
-                  type="text"
+                <AutocompleteSearch
                   value={clientLocation}
-                  onChange={(e) => setClientLocation(e.target.value)}
+                  onChange={setClientLocation}
+                  onSelect={(a) => {
+                    setClientLocation(a.areaName);
+                    if (a.emirate) setClientEmirate(a.emirate);
+                  }}
                   placeholder={lang === 'ar' ? 'ابحث أو اختر الموقع' : 'Search location'}
+                  dataList={allAreas}
+                  keyExtractor={(a) => a.id || a.areaName}
+                  labelExtractor={(a) => lang === 'ar' && a.areaNameAr ? a.areaNameAr : a.areaName}
+                  subLabelExtractor={(a) => a.emirate}
                   className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl"
                 />
               </div>
@@ -494,12 +590,27 @@ export default function CreateOrderPage() {
             <div className="grid grid-cols-3 gap-2.5">
               <div>
                 <label className="block text-[10px] font-bold text-slate-700 mb-1">{lang === 'ar' ? 'اسم الزبون' : 'Customer Name'}</label>
-                <input
-                  type="text"
+                <AutocompleteSearch
                   value={customerName}
-                  onChange={(e) => setCustomerName(e.target.value)}
+                  onChange={setCustomerName}
+                  onSelect={(c) => {
+                    setCustomerName(c.name || '');
+                    if (c.phone) setCustomerPhone1(c.phone);
+                    if (c.altPhone) setCustomerPhone2(c.altPhone);
+                    if (c.emirate) setCustomerEmirate(c.emirate);
+                    if (c.area) setCustomerLocation(c.area);
+                    if (c.addressLine) setCustomerAddress(c.addressLine);
+                    if (c.poBox) setCustomerPoBox(c.poBox);
+                    
+                    if (c.emirate) {
+                      handleAreaChange(c.area || '');
+                    }
+                  }}
                   placeholder={lang === 'ar' ? 'ابحث أو أدخل زبوناً جديداً' : 'Search or enter customer'}
-                  required
+                  dataList={customers}
+                  keyExtractor={(c) => c.id}
+                  labelExtractor={(c) => c.name}
+                  subLabelExtractor={(c) => `${c.phone} - ${c.emirate}`}
                   className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl"
                 />
               </div>
@@ -544,11 +655,21 @@ export default function CreateOrderPage() {
               </div>
               <div>
                 <label className="block text-[10px] font-bold text-slate-700 mb-1">{lang === 'ar' ? 'الموقع' : 'Location'}</label>
-                <input
-                  type="text"
+                <AutocompleteSearch
                   value={customerLocation}
-                  onChange={(e) => setCustomerLocation(e.target.value)}
+                  onChange={(val) => {
+                    setCustomerLocation(val);
+                  }}
+                  onSelect={(a) => {
+                    setCustomerLocation(a.areaName);
+                    if (a.emirate) setCustomerEmirate(a.emirate);
+                    handleAreaChange(a.areaName);
+                  }}
                   placeholder={lang === 'ar' ? 'ابحث أو اختر الموقع' : 'Search location'}
+                  dataList={allAreas}
+                  keyExtractor={(a) => a.id || a.areaName}
+                  labelExtractor={(a) => lang === 'ar' && a.areaNameAr ? a.areaNameAr : a.areaName}
+                  subLabelExtractor={(a) => a.emirate}
                   className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl"
                 />
               </div>
