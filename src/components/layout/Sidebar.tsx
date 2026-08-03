@@ -10,7 +10,6 @@ import {
   Users,
   PackageCheck,
   Truck,
-  Compass,
   Wallet,
   MapPin,
   Car,
@@ -66,18 +65,20 @@ import {
   Tag,
   Printer,
   ClipboardList,
-  Phone,
   ScanLine,
   Package,
   Archive,
   Warehouse,
   CircleAlert,
+  X,
   type LucideIcon,
 } from 'lucide-react';
 
 interface SidebarProps {
   collapsed: boolean;
   setCollapsed: (val: boolean) => void;
+  mobileOpen?: boolean;
+  setMobileOpen?: (val: boolean) => void;
 }
 
 interface SubItem {
@@ -96,7 +97,12 @@ interface NavSection {
   subItems?: SubItem[];
 }
 
-export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
+export default function Sidebar({
+  collapsed,
+  setCollapsed,
+  mobileOpen = false,
+  setMobileOpen,
+}: SidebarProps) {
   const pathname = usePathname();
   const { t, lang, dir } = useI18n();
   const [openSections, setOpenSections] = useState<string[]>(['home', 'orders']);
@@ -108,7 +114,6 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
   };
 
   const sections: NavSection[] = [
-    // ── Home ──────────────────────
     {
       id: 'home',
       name: 'Home',
@@ -119,7 +124,6 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
         { name: 'Vehicle Dashboard', nameAr: 'لوحة المركبات', href: '/dashboard/vehicle-dashboard', icon: Car },
       ],
     },
-    // ── Masters ───────────────────
     {
       id: 'masters',
       name: 'Masters',
@@ -136,7 +140,6 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
         { name: 'Designations', nameAr: 'المسميات الوظيفية', href: '/dashboard/masters/designations', icon: UserCheck },
       ],
     },
-    // ── Accounts ──────────────────
     {
       id: 'accounts',
       name: 'Accounts',
@@ -150,7 +153,6 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
         { name: 'Users', nameAr: 'المستخدمون', href: '/dashboard/accounts/users', icon: User },
       ],
     },
-    // ── Orders ────────────────────
     {
       id: 'orders',
       name: 'Orders',
@@ -165,7 +167,6 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
         { name: 'Batch Print', nameAr: 'طباعة مجمعة', href: '/dashboard/orders/batch-print', icon: Printer },
       ],
     },
-    // ── Uploads ────────────────────
     {
       id: 'uploads',
       name: 'Uploads',
@@ -177,7 +178,6 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
         { name: 'Client Upload', nameAr: 'رفع العملاء', href: '/dashboard/uploads/clients', icon: Building2 },
       ],
     },
-    // ── Delivery ──────────────────
     {
       id: 'delivery',
       name: 'Delivery',
@@ -191,7 +191,6 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
         { name: 'Push Order', nameAr: 'دفع الطلب', href: '/dashboard/delivery/push', icon: ArrowUpCircle },
       ],
     },
-    // ── Shipments ──────────────────
     {
       id: 'shipments',
       name: 'Shipments',
@@ -202,7 +201,6 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
         { name: 'Shipment List', nameAr: 'قائمة الشحنات', href: '/dashboard/shipments/list', icon: List },
       ],
     },
-    // ── Payments ──────────────────
     {
       id: 'financials',
       name: 'Payments',
@@ -210,7 +208,6 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
       icon: Wallet,
       href: '/dashboard/financials',
     },
-    // ── Returns ──────────────────
     {
       id: 'returns',
       name: 'Returns',
@@ -222,7 +219,6 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
         { name: 'Pending Returns', nameAr: 'مرتجعات قيد الانتظار', href: '/dashboard/returns/pending', icon: Clock },
       ],
     },
-    // ── Approvals ──────────────────
     {
       id: 'approvals',
       name: 'Approvals',
@@ -234,7 +230,6 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
         { name: 'Return Approvals', nameAr: 'موافقة المرتجعات', href: '/dashboard/approvals/returns', icon: RotateCcw },
       ],
     },
-    // ── Followup ──────────────────
     {
       id: 'followup',
       name: 'Followup',
@@ -248,7 +243,6 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
         { name: 'Return Followup', nameAr: 'متابعة المرتجعات', href: '/dashboard/followup/returns', icon: RotateCcw },
       ],
     },
-    // ── Expenses ──────────────────
     {
       id: 'expenses',
       name: 'Expenses',
@@ -259,7 +253,6 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
         { name: 'Company Expense', nameAr: 'مصروفات الشركة', href: '/dashboard/expenses/company', icon: Building2 },
       ],
     },
-    // ── Store ─────────────────────
     {
       id: 'store',
       name: 'Store',
@@ -274,7 +267,6 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
         { name: 'Pickup Scan', nameAr: 'مسح الاستلام', href: '/dashboard/store/pickup-scan', icon: Package },
       ],
     },
-    // ── Tracking ──────────────────
     {
       id: 'tracking',
       name: 'Tracking',
@@ -288,7 +280,6 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
         { name: 'Activity Tracker', nameAr: 'تتبع النشاطات', href: '/dashboard/tracking/activity', icon: Activity },
       ],
     },
-    // ── Messages ──────────────────
     {
       id: 'messages',
       name: 'Messages',
@@ -300,7 +291,6 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
         { name: 'Delivery Note SMS', nameAr: 'رسائل بوالص التوصيل', href: '/dashboard/messages/delivery-sms', icon: FileDown },
       ],
     },
-    // ── Vehicle Management ────────
     {
       id: 'fleet',
       name: 'Vehicle Management',
@@ -322,7 +312,6 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
         { name: 'Fine Records', nameAr: 'سجل المخالفات', href: '/dashboard/fleet/fines', icon: Ban },
       ],
     },
-    // ── Reports ───────────────────
     {
       id: 'reports',
       name: 'Reports',
@@ -343,7 +332,6 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
         { name: 'Financial Reports', nameAr: 'التقارير المالية', href: '/dashboard/reports/financial', icon: BarChart },
       ],
     },
-    // ── Counters ──────────────────
     {
       id: 'counters',
       name: 'Counters',
@@ -358,16 +346,16 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
     },
   ];
 
-  return (
-    <aside
-      className={`relative flex flex-col transition-all duration-300 ease-in-out text-white shadow-xl ${
-        collapsed ? 'w-20' : 'w-72'
+  const sidebarContent = (isMobile: boolean = false) => (
+    <div
+      className={`flex flex-col h-full text-white shadow-xl ${
+        isMobile ? 'w-80' : collapsed ? 'w-20' : 'w-72'
       }`}
       style={{ backgroundColor: '#169C47' }}
     >
       {/* Brand Header */}
       <div className="flex items-center justify-between h-16 px-4 border-b border-emerald-600/40 shrink-0">
-        {!collapsed && (
+        {(!collapsed || isMobile) && (
           <div className="flex items-center gap-3 overflow-hidden">
             <div className="bg-white text-[#169C47] font-black p-2 rounded-xl text-xl shadow-md flex items-center justify-center w-10 h-10 shrink-0">
               O
@@ -379,22 +367,31 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
           </div>
         )}
 
-        {collapsed && (
+        {collapsed && !isMobile && (
           <div className="mx-auto bg-white text-[#169C47] font-black p-2 rounded-xl text-xl shadow-md flex items-center justify-center w-10 h-10">
             O
           </div>
         )}
 
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="p-1.5 rounded-lg bg-emerald-700/60 hover:bg-emerald-600 transition-colors text-emerald-100 hidden md:flex items-center justify-center shrink-0"
-        >
-          {dir === 'rtl' ? (
-            collapsed ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />
-          ) : (
-            collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />
-          )}
-        </button>
+        {isMobile ? (
+          <button
+            onClick={() => setMobileOpen?.(false)}
+            className="p-2 rounded-lg bg-emerald-700/60 hover:bg-emerald-600 transition-colors text-emerald-100"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        ) : (
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="p-1.5 rounded-lg bg-emerald-700/60 hover:bg-emerald-600 transition-colors text-emerald-100 hidden md:flex items-center justify-center shrink-0"
+          >
+            {dir === 'rtl' ? (
+              collapsed ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />
+            ) : (
+              collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />
+            )}
+          </button>
+        )}
       </div>
 
       {/* Navigation */}
@@ -409,19 +406,19 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
 
           return (
             <div key={section.id}>
-              {/* Section Header */}
               {section.href ? (
                 <Link
                   href={section.href}
+                  onClick={() => isMobile && setMobileOpen?.(false)}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition-all group ${
                     isActive
                       ? 'bg-white text-[#169C47] font-semibold shadow-md'
                       : 'text-emerald-50 hover:bg-emerald-700/50 hover:text-white'
                   }`}
-                  title={collapsed ? (lang === 'ar' ? section.nameAr : section.name) : undefined}
+                  title={collapsed && !isMobile ? (lang === 'ar' ? section.nameAr : section.name) : undefined}
                 >
                   <Icon className={`w-[18px] h-[18px] shrink-0 ${isActive ? 'text-[#169C47]' : 'text-emerald-200 group-hover:text-white'}`} />
-                  {!collapsed && (
+                  {(!collapsed || isMobile) && (
                     <span className="truncate text-[13px]">{lang === 'ar' ? section.nameAr : section.name}</span>
                   )}
                 </Link>
@@ -433,10 +430,10 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
                       ? 'bg-emerald-800/80 text-white font-semibold'
                       : 'text-emerald-50 hover:bg-emerald-700/50 hover:text-white'
                   }`}
-                  title={collapsed ? (lang === 'ar' ? section.nameAr : section.name) : undefined}
+                  title={collapsed && !isMobile ? (lang === 'ar' ? section.nameAr : section.name) : undefined}
                 >
                   <Icon className={`w-[18px] h-[18px] shrink-0 ${isActive ? 'text-white' : 'text-emerald-200 group-hover:text-white'}`} />
-                  {!collapsed && (
+                  {(!collapsed || isMobile) && (
                     <>
                       <span className="truncate text-[13px] flex-1 text-start">{lang === 'ar' ? section.nameAr : section.name}</span>
                       {isOpen ? (
@@ -450,7 +447,7 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
               )}
 
               {/* Sub-Items */}
-              {!collapsed && hasSubItems && isOpen && (
+              {(!collapsed || isMobile) && hasSubItems && isOpen && (
                 <div className="ps-5 pe-1 py-1 space-y-0.5 border-s-2 border-emerald-500/30 ms-5 mt-1 mb-1">
                   {section.subItems!.map((sub) => {
                     const isSubActive = pathname === sub.href;
@@ -459,6 +456,7 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
                       <Link
                         key={sub.href}
                         href={sub.href}
+                        onClick={() => isMobile && setMobileOpen?.(false)}
                         className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-[12px] font-medium transition-colors ${
                           isSubActive
                             ? 'bg-white text-[#169C47] font-bold shadow-sm'
@@ -481,14 +479,15 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
       <div className="p-2.5 border-t border-emerald-600/40 space-y-2 shrink-0">
         <Link
           href="/login"
+          onClick={() => isMobile && setMobileOpen?.(false)}
           className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-emerald-100 hover:bg-emerald-700/60 hover:text-white text-sm font-medium transition-colors"
-          title={collapsed ? t.nav.logout : undefined}
+          title={collapsed && !isMobile ? t.nav.logout : undefined}
         >
           <LogOut className="w-[18px] h-[18px] shrink-0" />
-          {!collapsed && <span className="text-[13px]">{t.nav.logout}</span>}
+          {(!collapsed || isMobile) && <span className="text-[13px]">{t.nav.logout}</span>}
         </Link>
 
-        {!collapsed && (
+        {(!collapsed || isMobile) && (
           <div className="bg-emerald-800/60 rounded-xl p-3 flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-white text-[#169C47] font-bold flex items-center justify-center text-xs shadow shrink-0">
               AD
@@ -500,6 +499,28 @@ export default function Sidebar({ collapsed, setCollapsed }: SidebarProps) {
           </div>
         )}
       </div>
-    </aside>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex relative h-full shrink-0">
+        {sidebarContent(false)}
+      </aside>
+
+      {/* Mobile Slide-over Drawer Backdrop */}
+      {mobileOpen && (
+        <div className="md:hidden fixed inset-0 z-50 flex">
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
+            onClick={() => setMobileOpen?.(false)}
+          />
+          <div className="relative z-10 flex-1 max-w-xs h-full animate-in slide-in-from-start">
+            {sidebarContent(true)}
+          </div>
+        </div>
+      )}
+    </>
   );
 }
