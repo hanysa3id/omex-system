@@ -20,12 +20,14 @@ export default function LoginPage() {
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-tr from-[#0d5e2b] via-[#169C47] to-emerald-500 p-12 text-white flex-col justify-between relative overflow-hidden">
         <div className="relative z-10">
           <div className="flex items-center gap-3">
-            <div className="bg-white text-[#169C47] font-black p-2.5 rounded-2xl text-2xl shadow-lg">
-              O
-            </div>
+            <img
+              src="/logo.png"
+              alt="Omex Express Logo"
+              className="w-12 h-12 object-contain bg-white rounded-2xl p-1 shadow-lg"
+            />
             <div>
               <h1 className="font-extrabold text-2xl tracking-wide">OMEX EXPRESS</h1>
-              <p className="text-xs text-emerald-100">UAE Delivery Management System</p>
+              <p className="text-xs text-emerald-100">Delivery Services System</p>
             </div>
           </div>
         </div>

@@ -357,20 +357,24 @@ export default function Sidebar({
       <div className="flex items-center justify-between h-16 px-4 border-b border-emerald-600/40 shrink-0">
         {(!collapsed || isMobile) && (
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="bg-white text-[#169C47] font-black p-2 rounded-xl text-xl shadow-md flex items-center justify-center w-10 h-10 shrink-0">
-              O
-            </div>
+            <img
+              src="/logo.png"
+              alt="Omex Express Logo"
+              className="w-10 h-10 object-contain bg-white rounded-xl p-0.5 shadow-md shrink-0"
+            />
             <div className="min-w-0">
-              <h1 className="font-bold text-lg leading-tight tracking-wide">{t.brandName}</h1>
-              <p className="text-xs text-emerald-100/80 truncate">{t.systemName}</p>
+              <h1 className="font-bold text-lg leading-tight tracking-wide">OMEX EXPRESS</h1>
+              <p className="text-xs text-emerald-100/80 truncate">Delivery Services</p>
             </div>
           </div>
         )}
 
         {collapsed && !isMobile && (
-          <div className="mx-auto bg-white text-[#169C47] font-black p-2 rounded-xl text-xl shadow-md flex items-center justify-center w-10 h-10">
-            O
-          </div>
+          <img
+            src="/logo.png"
+            alt="Omex Express Logo"
+            className="mx-auto w-10 h-10 object-contain bg-white rounded-xl p-0.5 shadow-md shrink-0"
+          />
         )}
 
         {isMobile ? (
