@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useI18n } from '@/lib/i18n/I18nContext';
-import { INITIAL_CLIENTS, INITIAL_DRIVERS } from '@/lib/mockData';
+import { INITIAL_CLIENTS, INITIAL_DRIVERS, INITIAL_EMIRATES_AREAS } from '@/lib/mockData';
 import { PayType, OrderType } from '@/types';
 import { useRouter } from 'next/navigation';
 import {
@@ -23,8 +23,11 @@ import { useData } from '@/lib/context/DataContext';
 
 export default function CreateOrderPage() {
   const { t, lang } = useI18n();
-  const { addOrder } = useData();
+  const { addOrder, getCategoryRecords } = useData();
   const router = useRouter();
+
+  // Get all areas from Master Data (persisted + defaults)
+  const allAreas = useMemo(() => getCategoryRecords('Emirates', INITIAL_EMIRATES_AREAS), [getCategoryRecords]);
 
   // Section 1: Order Meta
   const [voucherNo] = useState(`OD${Math.floor(1000 + Math.random() * 9000)}`);
@@ -37,7 +40,7 @@ export default function CreateOrderPage() {
 
   const [collectFrom, setCollectFrom] = useState<'Client' | 'Customer'>('Customer');
   const [clientInvoiceNo, setClientInvoiceNo] = useState('');
-  const [orderType, setOrderType] = useState<OrderType>('Normal');
+  const [orderType, setOrderTypeRaw] = useState<OrderType>('Normal');
   const [agentName, setAgentName] = useState('');
   const [deliveryArea, setDeliveryArea] = useState('');
 
@@ -72,6 +75,44 @@ export default function CreateOrderPage() {
 
   const [productPrice, setProductPrice] = useState(0);
   const [deliveryCharge, setDeliveryCharge] = useState(20);
+
+  // Filtered areas based on selected customer emirate
+  const filteredAreas = useMemo(() => {
+    if (!customerEmirate) return allAreas.filter((a: any) => a.isActive !== false);
+    return allAreas.filter((a: any) => a.emirate === customerEmirate && a.isActive !== false);
+  }, [customerEmirate, allAreas]);
+
+  // Auto-fill delivery charge when area changes
+  const handleAreaChange = useCallback((areaName: string) => {
+    setDeliveryArea(areaName);
+    const matchedArea = allAreas.find((a: any) => a.areaName === areaName);
+    if (matchedArea) {
+      if (orderType === 'Express') {
+        setDeliveryCharge(matchedArea.expressCharge || matchedArea.deliveryCharge || 20);
+      } else {
+        setDeliveryCharge(matchedArea.deliveryCharge || 20);
+      }
+      // Also auto-fill customer emirate if not set
+      if (!customerEmirate) {
+        setCustomerEmirate(matchedArea.emirate);
+      }
+    }
+  }, [allAreas, orderType, customerEmirate]);
+
+  // When order type changes, update charge if area is already selected
+  const setOrderType = useCallback((newType: OrderType) => {
+    setOrderTypeRaw(newType);
+    if (deliveryArea) {
+      const matchedArea = allAreas.find((a: any) => a.areaName === deliveryArea);
+      if (matchedArea) {
+        if (newType === 'Express') {
+          setDeliveryCharge(matchedArea.expressCharge || matchedArea.deliveryCharge || 20);
+        } else {
+          setDeliveryCharge(matchedArea.deliveryCharge || 20);
+        }
+      }
+    }
+  }, [deliveryArea, allAreas]);
 
   // Success Modal
   const [createdOrderModal, setCreatedOrderModal] = useState<boolean>(false);
@@ -308,15 +349,22 @@ export default function CreateOrderPage() {
               </label>
               <select
                 value={deliveryArea}
-                onChange={(e) => setDeliveryArea(e.target.value)}
-                className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl font-bold"
+                onChange={(e) => handleAreaChange(e.target.value)}
+                className="w-full p-2 bg-slate-50 border border-indigo-400 rounded-xl font-bold ring-2 ring-indigo-100"
               >
-                <option value="">-</option>
-                <option value="Business Bay">Business Bay</option>
-                <option value="Deira">Deira</option>
-                <option value="JBR">JBR</option>
-                <option value="Al Reem">Al Reem Island</option>
+                <option value="">{lang === 'ar' ? 'اختر المنطقة' : 'Select Area'}</option>
+                {filteredAreas.map((area: any) => (
+                  <option key={area.id || area.areaName} value={area.areaName}>
+                    {lang === 'ar' ? `${area.areaNameAr} (${area.emirate})` : `${area.areaName} (${area.emirate})`}
+                  </option>
+                ))}
               </select>
+              {deliveryArea && (
+                <p className="text-[10px] text-indigo-600 mt-0.5 font-semibold">
+                  {lang === 'ar' ? `رسوم التوصيل: ${deliveryCharge} د.إ` : `Delivery: AED ${deliveryCharge}`}
+                  {orderType === 'Express' && (lang === 'ar' ? ' (إكسبريس)' : ' (Express)')}
+                </p>
+              )}
             </div>
           </div>
         </div>

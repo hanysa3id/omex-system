@@ -18,10 +18,12 @@ import {
   Edit,
   Eye,
   Printer,
+  Camera,
   type LucideIcon,
 } from 'lucide-react';
 
 import { useData } from '@/lib/context/DataContext';
+import BarcodeScannerModal from '@/components/shared/BarcodeScannerModal';
 
 interface Column {
   key: string;
@@ -42,6 +44,7 @@ interface PageScaffoldProps {
   showExport?: boolean;
   showFilter?: boolean;
   showDateFilter?: boolean;
+  showCameraScanner?: boolean;
   createLabelEn?: string;
   createLabelAr?: string;
   statusKey?: string;
@@ -61,6 +64,7 @@ export default function PageScaffold({
   showExport = true,
   showFilter = true,
   showDateFilter = false,
+  showCameraScanner = false,
   createLabelEn = 'Add New',
   createLabelAr = 'إضافة جديد',
   statusKey,
@@ -88,6 +92,7 @@ export default function PageScaffold({
 
   // Toast state
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
 
   // Sync rows if persisted rows update
   React.useEffect(() => {
@@ -217,6 +222,15 @@ export default function PageScaffold({
             >
               <Plus className="w-4 h-4" />
               {lang === 'ar' ? createLabelAr : createLabelEn}
+            </button>
+          )}
+          {showCameraScanner && (
+            <button
+              onClick={() => setIsScannerOpen(true)}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-[#352F7A] hover:bg-[#231E56] transition shadow-sm active:scale-95 cursor-pointer"
+            >
+              <Camera className="w-4 h-4 text-[#E87722]" />
+              {lang === 'ar' ? 'مسح بالكاميرا' : 'Camera Scan'}
             </button>
           )}
         </div>
@@ -578,6 +592,19 @@ export default function PageScaffold({
             </div>
           </div>
         </div>
+      )}
+
+      {/* Camera Barcode Scanner Modal */}
+      {showCameraScanner && (
+        <BarcodeScannerModal
+          isOpen={isScannerOpen}
+          onClose={() => setIsScannerOpen(false)}
+          onScan={(barcode) => {
+            setSearch(barcode);
+            setCurrentPage(1);
+            showToast(lang === 'ar' ? `تم مسح: ${barcode}` : `Scanned: ${barcode}`);
+          }}
+        />
       )}
     </div>
   );

@@ -16,7 +16,7 @@ export default function Page() {
       icon={Package}
       columns={columns}
       rows={sampleRows}
-      showDateFilter={true} statusKey="status" statusColors={{"Picked Up":"bg-green-100 text-green-700","In Progress":"bg-blue-100 text-blue-700"}} createLabelEn="Start Scan" createLabelAr="بدء المسح"
+      showDateFilter={true} showCameraScanner={true} statusKey="status" statusColors={{"Picked Up":"bg-green-100 text-green-700","In Progress":"bg-blue-100 text-blue-700"}} createLabelEn="Start Scan" createLabelAr="بدء المسح"
     />
   );
 }

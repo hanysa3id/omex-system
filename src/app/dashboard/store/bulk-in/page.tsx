@@ -16,7 +16,7 @@ export default function Page() {
       icon={Archive}
       columns={columns}
       rows={sampleRows}
-      showDateFilter={true} statusKey="status" statusColors={{"Completed":"bg-green-100 text-green-700","In Progress":"bg-blue-100 text-blue-700"}} createLabelEn="New Batch" createLabelAr="دفعة جديدة"
+      showDateFilter={true} showCameraScanner={true} statusKey="status" statusColors={{"Completed":"bg-green-100 text-green-700","In Progress":"bg-blue-100 text-blue-700"}} createLabelEn="New Batch" createLabelAr="دفعة جديدة"
     />
   );
 }
