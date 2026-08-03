@@ -3,25 +3,27 @@
 import React, { useState } from 'react';
 import { useI18n } from '@/lib/i18n/I18nContext';
 import { INITIAL_ORDERS } from '@/lib/mockData';
-import { Order, OrderStatus } from '@/types';
+import { Order } from '@/types';
 import { exportToCsv } from '@/lib/exportExcel';
 import {
   PackageCheck,
   Search,
-  Filter,
   Printer,
   PauseCircle,
   RotateCcw,
   Download,
   PlusCircle,
-  FileText,
+  Eye,
   X,
-  CheckCircle2,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function OrderListPage() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const router = useRouter();
+  const isAr = lang === 'ar';
+
   const [orders, setOrders] = useState<Order[]>(INITIAL_ORDERS);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('All');
@@ -100,14 +102,16 @@ export default function OrderListPage() {
             <span>{t.orders.title}</span>
           </div>
           <h2 className="text-xl font-black text-slate-900 mt-1">{t.nav.orderList}</h2>
-          <p className="text-slate-500 text-xs mt-0.5">Filter vouchers, hold/reverse orders, and batch print delivery notes.</p>
+          <p className="text-slate-500 text-xs mt-0.5">
+            {isAr ? 'تصفية الطرود، تجميد/إلغاء الطلبات وطباعة البوالص مجمعة' : 'Filter vouchers, hold/reverse orders, and batch print delivery notes.'}
+          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
           {selectedOrders.length > 0 && (
             <button
               onClick={() => setIsBatchPrintOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md transition-all animate-pulse"
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md transition-all"
             >
               <Printer className="w-4 h-4" />
               <span>{t.orders.batchPrint} ({selectedOrders.length})</span>
@@ -155,7 +159,7 @@ export default function OrderListPage() {
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
-              {st}
+              {st === 'All' ? (isAr ? 'الكل' : 'All') : st}
             </button>
           ))}
         </div>
@@ -197,13 +201,18 @@ export default function OrderListPage() {
                     />
                   </td>
                   <td className="p-3.5">
-                    <span className="font-bold text-[#169C47] font-mono">{ord.voucherNo}</span>
+                    <Link
+                      href="/dashboard/orders/details"
+                      className="font-bold text-[#169C47] font-mono hover:underline block"
+                    >
+                      {ord.voucherNo}
+                    </Link>
                     <p className="text-[10px] text-slate-400 font-mono">{ord.billNo}</p>
                   </td>
                   <td className="p-3.5 font-bold text-slate-900">{ord.clientName}</td>
                   <td className="p-3.5 text-slate-700">
                     <p className="font-semibold">{ord.customerName}</p>
-                    <p className="text-[10px] text-slate-400">{ord.customerPhone}</p>
+                    <p className="text-[10px] text-slate-400 font-mono">{ord.customerPhone}</p>
                   </td>
                   <td className="p-3.5 font-semibold text-slate-800">
                     {ord.emirate} ({ord.area})
@@ -225,16 +234,23 @@ export default function OrderListPage() {
                   </td>
                   <td className="p-3.5">
                     <div className="flex items-center gap-2">
+                      <Link
+                        href="/dashboard/orders/details"
+                        className="p-1.5 text-slate-500 hover:text-emerald-600 rounded-lg hover:bg-emerald-50"
+                        title={isAr ? 'عرض التفاصيل' : 'View Details'}
+                      >
+                        <Eye className="w-4 h-4 text-emerald-600" />
+                      </Link>
                       <button
                         onClick={() => setPrintModalOrder(ord)}
-                        className="p-1.5 text-slate-500 hover:text-blue-600 rounded-lg hover:bg-blue-50"
+                        className="p-1.5 text-slate-500 hover:text-blue-600 rounded-lg hover:bg-blue-50 cursor-pointer"
                         title={t.orders.printNote}
                       >
-                        <Printer className="w-4 h-4" />
+                        <Printer className="w-4 h-4 text-blue-600" />
                       </button>
                       <button
                         onClick={() => handleHoldOrder(ord.id)}
-                        className={`p-1.5 rounded-lg ${
+                        className={`p-1.5 rounded-lg cursor-pointer ${
                           ord.isOnHold
                             ? 'text-purple-600 bg-purple-50'
                             : 'text-slate-400 hover:text-purple-600 hover:bg-purple-50'
@@ -245,7 +261,7 @@ export default function OrderListPage() {
                       </button>
                       <button
                         onClick={() => handleReverseCancel(ord.id)}
-                        className="p-1.5 text-slate-400 hover:text-emerald-600 rounded-lg hover:bg-emerald-50"
+                        className="p-1.5 text-slate-400 hover:text-emerald-600 rounded-lg hover:bg-emerald-50 cursor-pointer"
                         title={t.orders.reverseCancel}
                       >
                         <RotateCcw className="w-4 h-4" />
@@ -259,19 +275,21 @@ export default function OrderListPage() {
         </div>
       </div>
 
-      {/* Single Delivery Note Print Modal */}
+      {/* Single Delivery Note Printable Modal (Bilingual AR / EN) */}
       {printModalOrder && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl p-6 shadow-2xl border border-slate-200 w-full max-w-2xl printable-area">
             <div className="flex items-center justify-between border-b border-slate-200 pb-4 mb-4 no-print">
-              <h3 className="font-bold text-slate-900 text-sm">Print Delivery Voucher Note</h3>
+              <h3 className="font-bold text-slate-900 text-sm">
+                {isAr ? 'طباعة بوليصة التوصيل' : 'Print Delivery Voucher Note'}
+              </h3>
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => window.print()}
-                  className="px-4 py-2 bg-[#169C47] text-white text-xs font-bold rounded-xl flex items-center gap-2"
+                  className="px-4 py-2 bg-[#169C47] text-white text-xs font-bold rounded-xl flex items-center gap-2 cursor-pointer shadow-md"
                 >
                   <Printer className="w-4 h-4" />
-                  <span>Print Now</span>
+                  <span>{isAr ? 'طباعة الآن' : 'Print Now'}</span>
                 </button>
                 <button onClick={() => setPrintModalOrder(null)} className="text-slate-400 hover:text-slate-600">
                   <X className="w-5 h-5" />
@@ -279,41 +297,43 @@ export default function OrderListPage() {
               </div>
             </div>
 
-            {/* Printable Content Voucher */}
-            <div className="space-y-4 border border-slate-300 p-6 rounded-xl bg-white text-slate-900">
-              <div className="flex justify-between items-start border-b border-slate-300 pb-4">
+            {/* Printable Content Voucher - Translates based on active language */}
+            <div className="space-y-4 border-2 border-slate-800 p-6 rounded-xl bg-white text-slate-900">
+              <div className="flex justify-between items-start border-b-2 border-slate-800 pb-4">
                 <div>
                   <h1 className="text-2xl font-black text-[#169C47]">OMEX EXPRESS UAE</h1>
-                  <p className="text-xs text-slate-500">Official Delivery Voucher Note</p>
+                  <p className="text-xs text-slate-500 font-bold">
+                    {isAr ? 'بوليصة توصيل رسمية' : 'Official Delivery Voucher Note'}
+                  </p>
                 </div>
                 <div className="text-end">
-                  <p className="font-mono font-bold text-lg">{printModalOrder.voucherNo}</p>
-                  <p className="text-xs text-slate-500">Date: {printModalOrder.deliveryDate}</p>
+                  <p className="font-mono font-bold text-lg text-[#169C47]">{printModalOrder.voucherNo}</p>
+                  <p className="text-xs text-slate-500">{isAr ? 'التاريخ:' : 'Date:'} {printModalOrder.deliveryDate}</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4 text-xs border-b border-slate-200 pb-4">
                 <div>
-                  <p className="font-bold text-slate-500 uppercase">Sender Client:</p>
+                  <p className="font-bold text-slate-500 uppercase">{isAr ? 'العميل (الراسل):' : 'Sender Client:'}</p>
                   <p className="font-bold text-sm text-slate-900">{printModalOrder.clientName}</p>
-                  <p className="text-slate-600">Ref: {printModalOrder.refNo}</p>
+                  <p className="text-slate-600">{isAr ? 'المرجع:' : 'Ref:'} {printModalOrder.refNo}</p>
                 </div>
                 <div>
-                  <p className="font-bold text-slate-500 uppercase">Recipient Customer:</p>
+                  <p className="font-bold text-slate-500 uppercase">{isAr ? 'الزبون (المستلم):' : 'Recipient Customer:'}</p>
                   <p className="font-bold text-sm text-slate-900">{printModalOrder.customerName}</p>
-                  <p className="text-slate-700">{printModalOrder.customerPhone}</p>
+                  <p className="text-slate-700 font-mono">{printModalOrder.customerPhone}</p>
                   <p className="text-slate-600">{printModalOrder.addressLine}, {printModalOrder.emirate}</p>
                 </div>
               </div>
 
-              <div className="flex justify-between items-center bg-slate-50 p-4 rounded-xl font-bold text-sm">
+              <div className="flex justify-between items-center bg-slate-50 p-4 rounded-xl font-bold text-xs">
                 <div>
-                  <span>Pay Type: </span>
+                  <span>{isAr ? 'نوع الدفع: ' : 'Pay Type: '}</span>
                   <span className="text-[#169C47]">{printModalOrder.payType}</span>
                 </div>
                 <div>
-                  <span>Total Amount (Inc. 5% VAT): </span>
-                  <span className="text-lg">AED {printModalOrder.totalAmount.toFixed(2)}</span>
+                  <span>{isAr ? 'إجمالي المبلغ (شامل 5% ضريبة): ' : 'Total Amount (Inc. 5% VAT): '}</span>
+                  <span className="text-sm text-[#169C47]">AED {printModalOrder.totalAmount.toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -326,30 +346,32 @@ export default function OrderListPage() {
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl p-6 shadow-2xl border border-slate-200 w-full max-w-xl space-y-4">
             <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-              <h3 className="font-bold text-slate-900 text-sm">Batch Invoice Printer ({selectedOrders.length} Orders)</h3>
+              <h3 className="font-bold text-slate-900 text-sm">
+                {isAr ? `طباعة فواتير مجمعة (${selectedOrders.length} طلبات)` : `Batch Invoice Printer (${selectedOrders.length} Orders)`}
+              </h3>
               <button onClick={() => setIsBatchPrintOpen(false)} className="text-slate-400 hover:text-slate-600">
                 <X className="w-5 h-5" />
               </button>
             </div>
             <p className="text-xs text-slate-600">
-              Generating bulk thermal labels and delivery notes for selected vouchers.
+              {isAr ? 'جاري توليد البوالص والملصقات الحرارية المجمعة للطلبات المحددة.' : 'Generating bulk thermal labels and delivery notes for selected vouchers.'}
             </p>
             <div className="flex justify-end gap-3 pt-3">
               <button
                 onClick={() => setIsBatchPrintOpen(false)}
                 className="px-4 py-2 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl"
               >
-                Cancel
+                {isAr ? 'إلغاء' : 'Cancel'}
               </button>
               <button
                 onClick={() => {
                   window.print();
                   setIsBatchPrintOpen(false);
                 }}
-                className="px-5 py-2 bg-[#169C47] text-white font-bold text-xs rounded-xl flex items-center gap-2"
+                className="px-5 py-2 bg-[#169C47] text-white font-bold text-xs rounded-xl flex items-center gap-2 cursor-pointer shadow-md"
               >
                 <Printer className="w-4 h-4" />
-                <span>Print All Selected</span>
+                <span>{isAr ? 'طباعة جميع المحدد' : 'Print All Selected'}</span>
               </button>
             </div>
           </div>
