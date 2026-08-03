@@ -22,7 +22,7 @@ import { useData } from '@/lib/context/DataContext';
 
 export default function OrderListPage() {
   const { t, lang } = useI18n();
-  const { orders, toggleHoldOrder, reverseCancelOrder } = useData();
+  const { orders, toggleHoldOrder, reverseCancelOrder, updateOrderStatus } = useData();
   const router = useRouter();
   const isAr = lang === 'ar';
 
@@ -231,19 +231,33 @@ export default function OrderListPage() {
                   </td>
                   <td className="p-3.5">
                     <div className="flex items-center gap-2">
+                      {/* Status Change Selector Dropdown */}
+                      <select
+                        value={ord.status}
+                        onChange={(e) => updateOrderStatus(ord.id, e.target.value as any)}
+                        className="text-[11px] font-bold p-1 bg-slate-50 border border-slate-200 rounded-lg outline-none cursor-pointer focus:ring-2 focus:ring-[#352F7A]"
+                      >
+                        <option value="Pickup Scheduled">{isAr ? 'مجدول للاستلام' : 'Pickup Scheduled'}</option>
+                        <option value="In Transit">{isAr ? 'في الطريق' : 'In Transit'}</option>
+                        <option value="Out for Delivery">{isAr ? 'خرج للتوصيل' : 'Out for Delivery'}</option>
+                        <option value="Delivered">{isAr ? 'تم التسليم' : 'Delivered'}</option>
+                        <option value="On Hold">{isAr ? 'تجميد الطلب' : 'On Hold'}</option>
+                        <option value="Cancelled">{isAr ? 'إلغاء الطلب' : 'Cancelled'}</option>
+                      </select>
+
                       <Link
                         href="/dashboard/orders/details"
-                        className="p-1.5 text-slate-500 hover:text-emerald-600 rounded-lg hover:bg-emerald-50"
+                        className="p-1.5 text-slate-500 hover:text-indigo-600 rounded-lg hover:bg-indigo-50"
                         title={isAr ? 'عرض التفاصيل' : 'View Details'}
                       >
-                        <Eye className="w-4 h-4 text-emerald-600" />
+                        <Eye className="w-4 h-4 text-[#352F7A]" />
                       </Link>
                       <button
                         onClick={() => setPrintModalOrder(ord)}
-                        className="p-1.5 text-slate-500 hover:text-blue-600 rounded-lg hover:bg-blue-50 cursor-pointer"
+                        className="p-1.5 text-slate-500 hover:text-orange-600 rounded-lg hover:bg-orange-50 cursor-pointer"
                         title={t.orders.printNote}
                       >
-                        <Printer className="w-4 h-4 text-blue-600" />
+                        <Printer className="w-4 h-4 text-[#E87722]" />
                       </button>
                       <button
                         onClick={() => handleHoldOrder(ord.id)}
@@ -255,13 +269,6 @@ export default function OrderListPage() {
                         title={t.orders.holdOrder}
                       >
                         <PauseCircle className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => handleReverseCancel(ord.id)}
-                        className="p-1.5 text-slate-400 hover:text-emerald-600 rounded-lg hover:bg-emerald-50 cursor-pointer"
-                        title={t.orders.reverseCancel}
-                      >
-                        <RotateCcw className="w-4 h-4" />
                       </button>
                     </div>
                   </td>

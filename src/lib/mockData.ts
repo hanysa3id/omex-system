@@ -21,6 +21,7 @@ export const INITIAL_EMIRATES_AREAS: EmirateArea[] = [
   { id: 'ea-8', emirate: 'Ajman', areaName: 'Al Nuaimia', areaNameAr: 'النعيمية', deliveryCharge: 30, expressCharge: 50, driverCommission: 6, isActive: true },
   { id: 'ea-9', emirate: 'Ras Al Khaimah', areaName: 'Al Nakheel', areaNameAr: 'النخيل', deliveryCharge: 40, expressCharge: 70, driverCommission: 8, isActive: true },
   { id: 'ea-10', emirate: 'Fujairah', areaName: 'Fujairah City', areaNameAr: 'مدينة الفجيرة', deliveryCharge: 45, expressCharge: 75, driverCommission: 10, isActive: true },
+  { id: 'ea-11', emirate: 'Umm Al Quwain', areaName: 'Al Salamah', areaNameAr: 'السلامة', deliveryCharge: 35, expressCharge: 60, driverCommission: 7, isActive: true },
 ];
 
 export const INITIAL_CLIENTS: Client[] = [

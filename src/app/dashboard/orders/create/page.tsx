@@ -376,10 +376,13 @@ export default function CreateOrderPage() {
                   className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl font-bold"
                 >
                   <option value="">{lang === 'ar' ? 'اختر الإمارة' : 'Select Emirate'}</option>
-                  <option value="Dubai">Dubai</option>
-                  <option value="Abu Dhabi">Abu Dhabi</option>
-                  <option value="Sharjah">Sharjah</option>
-                  <option value="Ajman">Ajman</option>
+                  <option value="Dubai">Dubai - دبي</option>
+                  <option value="Abu Dhabi">Abu Dhabi - أبوظبي</option>
+                  <option value="Sharjah">Sharjah - الشارقة</option>
+                  <option value="Ajman">Ajman - عجمان</option>
+                  <option value="Ras Al Khaimah">Ras Al Khaimah - رأس الخيمة</option>
+                  <option value="Fujairah">Fujairah - الفجيرة</option>
+                  <option value="Umm Al Quwain">Umm Al Quwain - أم القيوين</option>
                 </select>
               </div>
               <div>
@@ -479,13 +482,16 @@ export default function CreateOrderPage() {
                 <select
                   value={customerEmirate}
                   onChange={(e) => setCustomerEmirate(e.target.value)}
-                  className="w-full p-2 bg-slate-50 border border-blue-500 rounded-xl font-bold ring-2 ring-blue-100"
+                  className="w-full p-2 bg-slate-50 border border-indigo-500 rounded-xl font-bold ring-2 ring-indigo-100"
                 >
                   <option value="">{lang === 'ar' ? 'اختر الإمارة' : 'Select Emirate'}</option>
-                  <option value="Dubai">Dubai</option>
-                  <option value="Abu Dhabi">Abu Dhabi</option>
-                  <option value="Sharjah">Sharjah</option>
-                  <option value="Ajman">Ajman</option>
+                  <option value="Dubai">Dubai - دبي</option>
+                  <option value="Abu Dhabi">Abu Dhabi - أبوظبي</option>
+                  <option value="Sharjah">Sharjah - الشارقة</option>
+                  <option value="Ajman">Ajman - عجمان</option>
+                  <option value="Ras Al Khaimah">Ras Al Khaimah - رأس الخيمة</option>
+                  <option value="Fujairah">Fujairah - الفجيرة</option>
+                  <option value="Umm Al Quwain">Umm Al Quwain - أم القيوين</option>
                 </select>
               </div>
               <div>

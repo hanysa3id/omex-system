@@ -20,6 +20,7 @@ interface DataContextType {
   deleteOrder: (id: string) => void;
   toggleHoldOrder: (id: string) => void;
   reverseCancelOrder: (id: string) => void;
+  updateOrderStatus: (id: string, newStatus: Order['status']) => void;
   addRecordToCategory: (categoryKey: string, newRecord: any) => void;
   getCategoryRecords: (categoryKey: string, initialDefaults: any[]) => any[];
 }
@@ -129,6 +130,18 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     saveOrders(updated);
   };
 
+  const updateOrderStatus = (id: string, newStatus: Order['status']) => {
+    const updated = orders.map((o) => {
+      if (o.id === id) {
+        const isCancelled = newStatus === 'Cancelled';
+        const isOnHold = newStatus === 'On Hold';
+        return { ...o, status: newStatus, isCancelled, isOnHold };
+      }
+      return o;
+    });
+    saveOrders(updated);
+  };
+
   // Generic category records
   const addRecordToCategory = (categoryKey: string, newRecord: any) => {
     const existing = categoryStore[categoryKey] || [];
@@ -157,6 +170,7 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
         deleteOrder,
         toggleHoldOrder,
         reverseCancelOrder,
+        updateOrderStatus,
         addRecordToCategory,
         getCategoryRecords,
       }}
